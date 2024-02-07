@@ -1,0 +1,54 @@
+name: Publish NPM Package
+
+on:
+  release:
+    types: [published]
+
+env:
+  NAME: L-ING
+  EMAIL: hlf01@icloud.com
+  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+  RELEASE_VERSION: ${{ github.event.release.name }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'hlf20010508'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ env.GITHUB_TOKEN }}
+
+    - name: Update Version
+      run: |
+        sed -i 's/"version": "[^"]*"/"version": "'$RELEASE_VERSION'"/' package.json
+      
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        registry-url: https://registry.npmjs.org/
+
+    - name: Build
+      run: |
+        npm install
+        npm run build
+
+    - name: Commit and Push
+      run: |
+        git config --global user.name $NAME
+        git config --global user.email $EMAIL
+        git add -A
+        if git diff-index --quiet HEAD --; then
+            echo "Bypass commit."
+        else
+            git commit -m "chore: update version to $RELEASE_VERSION"
+            git tag -f $RELEASE_VERSION
+            git push origin HEAD:master
+            git push origin HEAD:master --tags -f
+        fi
+        
+    - name: publish
+      run: npm publish --access public

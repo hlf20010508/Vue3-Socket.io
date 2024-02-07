@@ -1,15 +1,20 @@
 {
-  "name": "vue-socket.io",
+  "name": "@hlf01/vue3-socket.io",
   "author": "Metin Seylan <metinsyln@gmail.com>",
-  "version": "3.0.10",
-  "description": "socket.io implementation for Vue.js and Vuex",
-  "main": "dist/vue-socketio.js",
+  "contributors": [
+    "L-ING <hlf01@icloud.com>"
+  ],
+  "version": "1.0.0",
+  "description": "Socket.io implementation for Vue.js 3.0",
+  "main": "dist/vue3-socket.io.js",
+  "type": "module",
+  "files": ["dist"],
   "scripts": {
-    "build": "webpack --mode=production --progress --hide-modules"
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MetinSeylan/Vue-Socket.io.git"
+    "url": "git+https://github.com/hlf20010508/Vue3-Socket.io.git"
   },
   "keywords": [
     "vuejs",
@@ -19,26 +24,19 @@
     "websocket",
     "socket.io-client",
     "realtime",
-    "flux",
-    "vuex",
-    "redux"
+    "vite"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MetinSeylan/Vue-Socket.io/issues"
+    "url": "https://github.com/hlf20010508/Vue3-Socket.io/issues"
   },
-  "homepage": "https://github.com/MetinSeylan/Vue-Socket.io",
+  "homepage": "https://github.com/hlf20010508/Vue3-Socket.io",
   "dependencies": {
-    "socket.io-client": "^2.1.1"
+    "socket.io-client": "^4.7.4",
+    "vue": "^3.4.15"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-transform-classes": "^7.1.0",
-    "@babel/preset-env": "^7.1.0",
-    "babel-loader": "^8.0.4",
-    "cross-env": "^5.2.0",
-    "webpack": "^4.23.1",
-    "webpack-cli": "^3.1.2"
+    "@vitejs/plugin-vue": "^5.0.3",
+    "vite": "^5.0.11"
   }
 }

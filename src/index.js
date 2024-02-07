@@ -1,75 +1,56 @@
-import Mixin from './mixin';
+import useSocketIO from './socketIO';
 import Logger from './logger';
 import Listener from './listener';
 import Emitter from './emitter';
-import SocketIO from 'socket.io-client';
+import socket from 'socket.io-client';
+
+export { useSocketIO };
 
 export default class VueSocketIO {
 
     /**
      * lets take all resource
-     * @param io
-     * @param vuex
+     * @param connection
      * @param debug
      * @param options
      */
-    constructor({connection, vuex, debug, options}){
-
+    constructor({ connection, debug, options }) {
         Logger.debug = debug;
-        this.io = this.connect(connection, options);
-        this.emitter = new Emitter(vuex);
-        this.listener = new Listener(this.io, this.emitter);
-
+        this.socket = this.connect(connection, options);
+        this.emitter = new Emitter();
+        this.listener = new Listener(this.socket, this.emitter);
     }
 
     /**
      * Vue.js entry point
-     * @param Vue
+     * @param app
      */
-    install(Vue){
+    install(app) {
+        app.config.globalProperties.$socket = this.socket;
+        app.config.globalProperties.$vueSocketIO = this;
 
-        const version = Number(Vue.version.split('.')[0])
-
-        if (version >= 3) {
-            Vue.config.globalProperties.$socket = this.io;
-            Vue.config.globalProperties.$vueSocketIo = this;
-        } else {
-            Vue.prototype.$socket = this.io;
-            Vue.prototype.$vueSocketIo = this;
-        }
-
-        Vue.mixin(Mixin);
+        app.provide('socket', this.socket);
+        app.provide('vueSocketIO', this);
 
         Logger.info('Vue-Socket.io plugin enabled');
-
     }
-
 
     /**
      * registering SocketIO instance
      * @param connection
      * @param options
      */
-    connect(connection, options){
-
-        if(connection && typeof connection === 'object'){
-
+    connect(connection, options) {
+        if (connection && typeof connection === 'object') {
             Logger.info('Received socket.io-client instance');
 
             return connection;
-
-        } else if(typeof connection === 'string'){
-
+        } else if (typeof connection === 'string') {
             Logger.info('Received connection string');
 
-            return this.io = SocketIO(connection, options);
-
+            return this.socket = socket(connection, options);
         } else {
-
             throw new Error('Unsupported connection type');
-
         }
-
     }
-
 }
