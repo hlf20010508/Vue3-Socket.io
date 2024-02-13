@@ -14,8 +14,8 @@ export default class EventEmitter {
      */
     addListener(event, callback, instance) {
         if (typeof callback === 'function') {
-            if (!this.listeners.has(event)) this.listeners.set(event, []);
-            this.listeners.get(event).push({ callback, uid: instance.uid });
+            if (!this.listeners.has(event)) this.listeners.set(event, {});
+            this.listeners.get(event)[instance.uid] = callback;
             Logger.info(`#${event} subscribe, component: ${instance.type.__name}`);
         } else {
             throw new Error(`callback must be a function`);
@@ -29,17 +29,13 @@ export default class EventEmitter {
      */
     removeListener(event, instance) {
         if (this.listeners.has(event)) {
-            const listeners = this.listeners.get(event).filter(listener => (
-                listener.uid !== instance.uid
-            ));
-
-            if (listeners.length > 0) {
-                this.listeners.set(event, listeners);
-            } else {
-                this.listeners.delete(event);
+            if (instance.uid in this.listeners.get(event)) {
+                delete this.listeners.get(event)[instance.uid];
+                Logger.info(`#${event} unsubscribe, component: ${instance.type.__name}`);
             }
 
-            Logger.info(`#${event} unsubscribe, component: ${instance.type.__name}`);
+            if (Object.keys(this.listeners.get(event)).length > 0)
+                this.listeners.delete(event);
         }
     }
 
@@ -52,9 +48,8 @@ export default class EventEmitter {
         if (this.listeners.has(event)) {
             Logger.info(`Broadcasting: #${event}, Data:`, args);
 
-            this.listeners.get(event).forEach((listener) => {
-                listener.callback(args);
-            });
+            for(let uid of Object.keys(this.listeners.get(event)))
+                this.listeners.get(event)[uid](args);
         }
     }
 }

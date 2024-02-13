@@ -20,9 +20,8 @@ export default function () {
      * unsubscribe when component unmounting
      */
     onBeforeUnmount(() => {
-        Object.keys(socketIO.emitter.listeners).forEach(event => {
-            unsubscribe(event)
-        });
+        for (let event of socketIO.emitter.listeners.keys())
+            unsubscribe(event);
     })
 
     return { subscribe, unsubscribe };

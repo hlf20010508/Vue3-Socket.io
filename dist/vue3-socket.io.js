@@ -1,23 +1,22 @@
-var f = Object.defineProperty;
-var u = (i, e, t) => e in i ? f(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
-var h = (i, e, t) => (u(i, typeof e != "symbol" ? e + "" : e, t), t);
-import { getCurrentInstance as a, onBeforeUnmount as g } from "vue";
+var h = Object.defineProperty;
+var u = (i, e, t) => e in i ? h(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
+var l = (i, e, t) => (u(i, typeof e != "symbol" ? e + "" : e, t), t);
+import { getCurrentInstance as g, onBeforeUnmount as a } from "vue";
 import d from "socket.io-client";
 function w() {
-  const i = a(), e = i.appContext.config.globalProperties.$vueSocketIO;
-  function t(o, l) {
-    e.emitter.addListener(o, l, i);
+  const i = g(), e = i.appContext.config.globalProperties.$vueSocketIO;
+  function t(n, f) {
+    e.emitter.addListener(n, f, i);
   }
-  function s(o) {
-    e.emitter.removeListener(o, i);
+  function s(n) {
+    e.emitter.removeListener(n, i);
   }
-  return g(() => {
-    Object.keys(e.emitter.listeners).forEach((o) => {
-      s(o);
-    });
+  return a(() => {
+    for (let n of e.emitter.listeners.keys())
+      s(n);
   }), { subscribe: t, unsubscribe: s };
 }
-const n = new class {
+const o = new class {
   constructor() {
     this.debug = !1, this.prefix = "%cVue3-Socket.io: ";
   }
@@ -67,7 +66,7 @@ const n = new class {
  * socket.io-client reserved event keywords
  * @type {string[]}
  */
-h(r, "staticEvents", [
+l(r, "staticEvents", [
   "connect",
   "error",
   "disconnect",
@@ -95,7 +94,7 @@ class m {
    */
   addListener(e, t, s) {
     if (typeof t == "function")
-      this.listeners.has(e) || this.listeners.set(e, []), this.listeners.get(e).push({ callback: t, uid: s.uid }), n.info(`#${e} subscribe, component: ${s.type.__name}`);
+      this.listeners.has(e) || this.listeners.set(e, {}), this.listeners.get(e)[s.uid] = t, o.info(`#${e} subscribe, component: ${s.type.__name}`);
     else
       throw new Error("callback must be a function");
   }
@@ -105,10 +104,7 @@ class m {
    * @param instance
    */
   removeListener(e, t) {
-    if (this.listeners.has(e)) {
-      const s = this.listeners.get(e).filter((o) => o.uid !== t.uid);
-      s.length > 0 ? this.listeners.set(e, s) : this.listeners.delete(e), n.info(`#${e} unsubscribe, component: ${t.type.__name}`);
-    }
+    this.listeners.has(e) && (t.uid in this.listeners.get(e) && (delete this.listeners.get(e)[t.uid], o.info(`#${e} unsubscribe, component: ${t.type.__name}`)), Object.keys(this.listeners.get(e)).length > 0 && this.listeners.delete(e));
   }
   /**
    * broadcast incoming event to components
@@ -116,9 +112,11 @@ class m {
    * @param args
    */
   emit(e, t) {
-    this.listeners.has(e) && (n.info(`Broadcasting: #${e}, Data:`, t), this.listeners.get(e).forEach((s) => {
-      s.callback(t);
-    }));
+    if (this.listeners.has(e)) {
+      o.info(`Broadcasting: #${e}, Data:`, t);
+      for (let s of Object.keys(this.listeners.get(e)))
+        this.listeners.get(e)[s](t);
+    }
   }
 }
 class $ {
@@ -129,14 +127,14 @@ class $ {
    * @param options
    */
   constructor({ connection: e, debug: t, options: s }) {
-    n.debug = t, this.socket = this.connect(e, s), this.emitter = new m(), this.listener = new c(this.socket, this.emitter);
+    o.debug = t, this.socket = this.connect(e, s), this.emitter = new m(), this.listener = new c(this.socket, this.emitter);
   }
   /**
    * Vue.js entry point
    * @param app
    */
   install(e) {
-    e.config.globalProperties.$socket = this.socket, e.config.globalProperties.$vueSocketIO = this, e.provide("socket", this.socket), e.provide("vueSocketIO", this), n.info("Vue-Socket.io plugin enabled");
+    e.config.globalProperties.$socket = this.socket, e.config.globalProperties.$vueSocketIO = this, e.provide("socket", this.socket), e.provide("vueSocketIO", this), o.info("Vue-Socket.io plugin enabled");
   }
   /**
    * registering SocketIO instance
@@ -145,9 +143,9 @@ class $ {
    */
   connect(e, t) {
     if (e && typeof e == "object")
-      return n.info("Received socket.io-client instance"), e;
+      return o.info("Received socket.io-client instance"), e;
     if (typeof e == "string")
-      return n.info("Received connection string"), this.socket = d(e, t);
+      return o.info("Received connection string"), this.socket = d(e, t);
     throw new Error("Unsupported connection type");
   }
 }
