@@ -4,7 +4,7 @@
   "contributors": [
     "L-ING <hlf01@icloud.com>"
   ],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Socket.io implementation for Vue.js 3.0",
   "main": "dist/vue3-socket.io.js",
   "type": "module",
