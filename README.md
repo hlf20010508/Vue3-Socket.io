@@ -78,8 +78,13 @@ onMounted(() => {
 // All event listeners will be unsubscribed automatically once the component is unmounted
 
 function unsubscribeEvent(eventName) {
-    // Unsubscribe event
+    // Unsubscribe event for current instance
     socketIO.unsubscribe(eventName);
+}
+
+function removeEvent(eventName) {
+    // Unsubscribe event for all instance
+    socketIO.removeEvent(eventName);
 }
 
 function sendMessage(message) {

@@ -23,7 +23,7 @@ export default class EventEmitter {
     }
 
     /**
-     * remove a listenler
+     * remove a listener
      * @param event
      * @param instance
      */
@@ -34,9 +34,18 @@ export default class EventEmitter {
                 Logger.info(`#${event} unsubscribe, component: ${instance.type.__name}`);
             }
 
-            if (Object.keys(this.listeners.get(event)).length > 0)
+            if (Object.keys(this.listeners.get(event)).length == 0)
                 this.listeners.delete(event);
         }
+    }
+
+    /**
+     * remove event listener
+     * @param event
+     */
+    removeEvent(event) {
+        if (this.listeners.has(event))
+            this.listeners.delete(event);
     }
 
     /**

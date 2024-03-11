@@ -16,6 +16,10 @@ export default function () {
         socketIO.emitter.removeListener(event, instance);
     };
 
+    function removeEvent(event) {
+        socketIO.emitter.removeEvent(event);
+    };
+
     /**
      * unsubscribe when component unmounting
      */
@@ -24,5 +28,5 @@ export default function () {
             unsubscribe(event);
     })
 
-    return { subscribe, unsubscribe };
+    return { subscribe, unsubscribe, removeEvent };
 }
