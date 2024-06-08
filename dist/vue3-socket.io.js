@@ -1,75 +1,78 @@
 var u = Object.defineProperty;
 var g = (i, e, t) => e in i ? u(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
-var l = (i, e, t) => (g(i, typeof e != "symbol" ? e + "" : e, t), t);
-import { getCurrentInstance as a, onBeforeUnmount as d } from "vue";
-import m from "socket.io-client";
-function E() {
-  const i = a(), e = i.appContext.config.globalProperties.$vueSocketIO;
-  function t(o, f) {
-    e.emitter.addListener(o, f, i);
+var s = (i, e, t) => (g(i, typeof e != "symbol" ? e + "" : e, t), t);
+import a, { Socket as d } from "socket.io-client";
+import { getCurrentInstance as m, onBeforeUnmount as k } from "vue";
+function v() {
+  const i = m(), e = i.appContext.config.globalProperties.$vueSocketIO;
+  function t(n, h) {
+    e.emitter.addListener(n, h, i);
   }
-  function s(o) {
-    e.emitter.removeListener(o, i);
+  function o(n) {
+    e.emitter.removeListener(n, i);
   }
-  function h(o) {
-    e.emitter.removeEvent(o);
+  function f(n) {
+    e.emitter.removeEvent(n);
   }
-  return d(() => {
-    for (let o of e.emitter.listeners.keys())
-      s(o);
-  }), { subscribe: t, unsubscribe: s, removeEvent: h };
+  return k(() => {
+    for (let n of e.emitter.listeners.keys())
+      o(n);
+  }), { subscribe: t, unsubscribe: o, removeEvent: f };
 }
-const n = new class {
+const r = new class {
   constructor() {
+    s(this, "debug");
+    s(this, "prefix");
     this.debug = !1, this.prefix = "%cVue3-Socket.io: ";
   }
-  info(e, t = "") {
+  info(e, ...t) {
     this.debug && window.console.info(
       this.prefix + `%c${e}`,
       "color: blue; font-weight: 600",
       "color: #333333",
-      t
+      ...t
     );
   }
-  error() {
-    this.debug && window.console.error(this.prefix, ...arguments);
+  error(...e) {
+    this.debug && window.console.error(this.prefix, ...e);
   }
-  warn() {
-    this.debug && window.console.warn(this.prefix, ...arguments);
+  warn(...e) {
+    this.debug && window.console.warn(this.prefix, ...e);
   }
-  event(e, t = "") {
+  event(e, ...t) {
     this.debug && window.console.info(
       this.prefix + `%c${e}`,
       "color: blue; font-weight: 600",
       "color: #333333",
-      t
+      ...t
     );
   }
-}(), r = class r {
+}(), c = class c {
   constructor(e, t) {
+    s(this, "socket");
+    s(this, "emitter");
     this.socket = e, this.register(), this.emitter = t;
   }
   /**
    * Listening all socket.io events
    */
   register() {
-    this.socket.onevent = (e) => {
-      let [t, ...s] = e.data;
-      s.length === 1 && (s = s[0]), this.onEvent(t, s);
-    }, r.staticEvents.forEach((e) => this.socket.on(e, (t) => this.onEvent(e, t)));
+    this.socket.onAny((e, ...t) => {
+      this.onEvent(e, ...t);
+    }), c.staticEvents.forEach((e) => this.socket.on(e, (...t) => this.onEvent(e, ...t)));
   }
   /**
    * Broadcast all events to vuejs environment
    */
-  onEvent(e, t) {
-    this.emitter.emit(e, t);
+  onEvent(e, ...t) {
+    this.emitter.emit(e, ...t);
   }
 };
 /**
  * socket.io-client reserved event keywords
  * @type {string[]}
  */
-l(r, "staticEvents", [
+s(c, "staticEvents", [
   "connect",
   "error",
   "disconnect",
@@ -84,82 +87,86 @@ l(r, "staticEvents", [
   "ping",
   "pong"
 ]);
-let c = r;
+let l = c;
 class b {
   constructor() {
+    s(this, "listeners");
     this.listeners = /* @__PURE__ */ new Map();
   }
   /**
    * register new event listener with vuejs component instance
-   * @param event
-   * @param callback
-   * @param instance
+   * @param event - the name of the event to listen for
+   * @param callback - the function to call when the event occurs
+   * @param instance - the Vue.js component instance that is registering the listener
    */
-  addListener(e, t, s) {
+  addListener(e, t, o) {
     if (typeof t == "function")
-      this.listeners.has(e) || this.listeners.set(e, {}), this.listeners.get(e)[s.uid] = t, n.info(`#${e} subscribe, component: ${s.type.__name}`);
+      this.listeners.has(e) || this.listeners.set(e, {}), this.listeners.get(e)[o.uid] = t, r.info(`#${e} subscribe, component: ${o.type.__name}`);
     else
       throw new Error("callback must be a function");
   }
   /**
    * remove a listener
-   * @param event
-   * @param instance
+   * @param event - the name of the event to listen for
+   * @param instance - the Vue.js component instance that is registering the listener
    */
   removeListener(e, t) {
-    this.listeners.has(e) && (t.uid in this.listeners.get(e) && (delete this.listeners.get(e)[t.uid], n.info(`#${e} unsubscribe, component: ${t.type.__name}`)), Object.keys(this.listeners.get(e)).length == 0 && this.listeners.delete(e));
+    this.listeners.has(e) && (t.uid in this.listeners.get(e) && (delete this.listeners.get(e)[t.uid], r.info(`#${e} unsubscribe, component: ${t.type.__name}`)), Object.keys(this.listeners.get(e)).length == 0 && this.listeners.delete(e));
   }
   /**
    * remove event listener
-   * @param event
+   * @param event - the name of the event to listen for
    */
   removeEvent(e) {
     this.listeners.has(e) && this.listeners.delete(e);
   }
   /**
    * broadcast incoming event to components
-   * @param event
-   * @param args
+   * @param event - the name of the event to listen for
+   * @param args - the arguments to pass to the callback function
    */
-  emit(e, t) {
+  emit(e, ...t) {
     if (this.listeners.has(e)) {
-      n.info(`Broadcasting: #${e}, Data:`, t);
-      for (let s of Object.keys(this.listeners.get(e)))
-        this.listeners.get(e)[s](t);
+      r.info(`Broadcasting: #${e}, Data:`, t);
+      for (let o of Object.keys(this.listeners.get(e)))
+        this.listeners.get(e)[o](...t);
     }
   }
 }
-class $ {
+class y {
   /**
    * lets take all resource
-   * @param connection
-   * @param debug
-   * @param options
+   * @param connection - connection string (https://example.com) or socket.io-client instance
+   * @param debug - whether to log all events to console.log
+   * @param options - socket.io-client options
    */
-  constructor({ connection: e, debug: t, options: s }) {
-    n.debug = t, this.socket = this.connect(e, s), this.emitter = new b(), this.listener = new c(this.socket, this.emitter);
+  constructor({ connection: e, debug: t = !1, options: o }) {
+    s(this, "socket");
+    s(this, "emitter");
+    s(this, "listener");
+    r.debug = t, this.socket = this.connect(e, o), this.emitter = new b(), this.listener = new l(this.socket, this.emitter);
   }
   /**
    * Vue.js entry point
-   * @param app
+   * @param app - Vue.js app instance
    */
   install(e) {
-    e.config.globalProperties.$socket = this.socket, e.config.globalProperties.$vueSocketIO = this, e.provide("socket", this.socket), e.provide("vueSocketIO", this), n.info("Vue-Socket.io plugin enabled");
+    e.config.globalProperties.$socket = this.socket, e.config.globalProperties.$vueSocketIO = this, e.provide("socket", this.socket), e.provide("vueSocketIO", this), r.info("Vue-Socket.io plugin enabled");
   }
   /**
    * registering SocketIO instance
-   * @param connection
-   * @param options
+   * @param connection - connection string (https://example.com) or socket.io-client instance
+   * @param options - socket.io-client options
    */
   connect(e, t) {
-    if (e && typeof e == "object")
-      return n.info("Received socket.io-client instance"), e;
+    if (e && e instanceof d)
+      return r.info("Received socket.io-client instance"), e;
     if (typeof e == "string")
-      return n.info("Received connection string"), this.socket = m(e, t);
+      return r.info("Received connection string"), this.socket = a(e, t);
     throw new Error("Unsupported connection type");
   }
 }
 export {
-  $ as default,
-  E as useSocketIO
+  y as default,
+  v as useSocketIO
 };

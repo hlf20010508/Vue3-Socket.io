@@ -1,20 +1,25 @@
+import socket, { Socket, ManagerOptions, SocketOptions } from 'socket.io-client';
+import { App } from "vue";
 import useSocketIO from './socketIO';
 import Logger from './logger';
 import Listener from './listener';
 import Emitter from './emitter';
-import socket from 'socket.io-client';
+import { VueSocketOptions } from './type';
 
 export { useSocketIO };
 
 export default class VueSocketIO {
+    socket: Socket;
+    emitter: Emitter;
+    listener: Listener;
 
     /**
      * lets take all resource
-     * @param connection
-     * @param debug
-     * @param options
+     * @param connection - connection string (https://example.com) or socket.io-client instance
+     * @param debug - whether to log all events to console.log
+     * @param options - socket.io-client options
      */
-    constructor({ connection, debug, options }) {
+    constructor({ connection, debug = false, options }: VueSocketOptions) {
         Logger.debug = debug;
         this.socket = this.connect(connection, options);
         this.emitter = new Emitter();
@@ -23,9 +28,9 @@ export default class VueSocketIO {
 
     /**
      * Vue.js entry point
-     * @param app
+     * @param app - Vue.js app instance
      */
-    install(app) {
+    install(app: App) {
         app.config.globalProperties.$socket = this.socket;
         app.config.globalProperties.$vueSocketIO = this;
 
@@ -37,11 +42,11 @@ export default class VueSocketIO {
 
     /**
      * registering SocketIO instance
-     * @param connection
-     * @param options
+     * @param connection - connection string (https://example.com) or socket.io-client instance
+     * @param options - socket.io-client options
      */
-    connect(connection, options) {
-        if (connection && typeof connection === 'object') {
+    connect(connection: string | Socket, options?: ManagerOptions & SocketOptions) {
+        if (connection && connection instanceof Socket) {
             Logger.info('Received socket.io-client instance');
 
             return connection;

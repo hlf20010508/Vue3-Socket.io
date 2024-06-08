@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io-client';
+import EventEmitter from './emitter';
 
 export default class VueSocketIOListener {
 
@@ -5,7 +7,7 @@ export default class VueSocketIOListener {
      * socket.io-client reserved event keywords
      * @type {string[]}
      */
-    static staticEvents = [
+    static staticEvents: string[] = [
         'connect',
         'error',
         'disconnect',
@@ -21,7 +23,10 @@ export default class VueSocketIOListener {
         'pong'
     ];
 
-    constructor(socket, emitter) {
+    socket: Socket;
+    emitter: EventEmitter;
+
+    constructor(socket: Socket, emitter: EventEmitter) {
         this.socket = socket;
         this.register();
         this.emitter = emitter;
@@ -31,21 +36,18 @@ export default class VueSocketIOListener {
      * Listening all socket.io events
      */
     register() {
-        this.socket.onevent = (packet) => {
-            let [event, ...args] = packet.data;
+        this.socket.onAny((event: string, ...args: unknown[]) => {
+            this.onEvent(event, ...args);
+        });
 
-            if (args.length === 1) args = args[0];
-
-            this.onEvent(event, args)
-        };
-        VueSocketIOListener.staticEvents.forEach(event => this.socket.on(event, args => this.onEvent(event, args)))
+        VueSocketIOListener.staticEvents.forEach(event => this.socket.on(event, (...args: unknown[]) => this.onEvent(event, ...args)))
     }
 
     /**
      * Broadcast all events to vuejs environment
      */
-    onEvent(event, args) {
-        this.emitter.emit(event, args);
+    onEvent(event: string, ...args: unknown[]) {
+        this.emitter.emit(event, ...args);
     }
 
 }
