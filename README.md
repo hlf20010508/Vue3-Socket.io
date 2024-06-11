@@ -95,7 +95,8 @@ function sendMessage(message) {
 ```
 
 ## Parameters
-**Parameters**|**Type's**|**Default**|**Required**|**Description**
+**Parameters**|**Types**|**Default**|**Required**|**Description**
 -----|-----|-----|-----|-----
-debug|Boolean|`false`|Optional|Enable logging for debug
-connection|String/Socket.io-client|`null`|Required|Websocket server url or socket.io-client instance
+connection|String/Socket|`null`|Required|Websocket server url or socket.io-client instance.
+debug|Boolean|`false`|Optional|Enable logging for debug.
+options|Partial<ManagerOptions & SocketOptions>|`null`|Optional|Socket.io options for connection and configuration. See [socket.io-client options documentation](https://socket.io/docs/v4/client-options/) for more information.
