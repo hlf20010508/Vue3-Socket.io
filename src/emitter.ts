@@ -55,7 +55,7 @@ export default class EventEmitter {
      * @param event - the name of the event to listen for
      * @param args - the arguments to pass to the callback function
      */
-    emit(event: string, ...args: unknown[]) {
+    emit(event: string, ...args: any[]) {
         if (this.listeners.has(event)) {
             Logger.info(`Broadcasting: #${event}, Data:`, args);
 

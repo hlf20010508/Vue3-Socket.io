@@ -10,7 +10,7 @@ export default new class VueSocketIOLogger {
         this.prefix = '%cVue3-Socket.io: ';
     }
 
-    info(text: string, ...data: unknown[]) {
+    info(text: string, ...data: any[]) {
         if (this.debug)
             window.console.info(
                 this.prefix + `%c${text}`,
@@ -20,15 +20,15 @@ export default new class VueSocketIOLogger {
             );
     }
 
-    error(...data: unknown[]) {
+    error(...data: any[]) {
         if (this.debug) window.console.error(this.prefix, ...data);
     }
 
-    warn(...data: unknown[]) {
+    warn(...data: any[]) {
         if (this.debug) window.console.warn(this.prefix, ...data);
     }
 
-    event(text: string, ...data: unknown[]) {
+    event(text: string, ...data: any[]) {
         if (this.debug)
             window.console.info(
                 this.prefix + `%c${text}`,

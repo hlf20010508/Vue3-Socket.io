@@ -31,10 +31,10 @@ declare class EventEmitter {
      * @param event - the name of the event to listen for
      * @param args - the arguments to pass to the callback function
      */
-    emit(event: string, ...args: unknown[]): void;
+    emit(event: string, ...args: any[]): void;
 }
 
-declare type ListenerCallback = (...args: unknown[]) => void;
+declare type ListenerCallback = (...args: any[]) => void;
 
 declare type ListenerMap = {
     [key: string]: ListenerCallback;
@@ -87,7 +87,7 @@ declare class VueSocketIOListener {
     /**
      * Broadcast all events to vuejs environment
      */
-    onEvent(event: string, ...args: unknown[]): void;
+    onEvent(event: string, ...args: any[]): void;
 }
 
 declare interface VueSocketOptions {

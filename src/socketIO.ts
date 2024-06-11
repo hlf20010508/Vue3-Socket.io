@@ -1,4 +1,5 @@
-import { onBeforeUnmount, getCurrentInstance } from "vue";
+import { onBeforeUnmount, getCurrentInstance, ComponentInternalInstance } from "vue";
+import VueSocketIO from "./vueSocketIO";
 import { ListenerCallback } from "./type";
 
 export default function useSocketIO() {
@@ -6,8 +7,8 @@ export default function useSocketIO() {
     /**
      *  Assign runtime callbacks
      */
-    const instance = getCurrentInstance();
-    const socketIO = instance!.appContext.config.globalProperties.$vueSocketIO;
+    const instance: ComponentInternalInstance = getCurrentInstance()!;
+    const socketIO: VueSocketIO = instance.appContext.config.globalProperties.$vueSocketIO;
 
     function subscribe(event: string, callback: ListenerCallback) {
         socketIO.emitter.addListener(event, callback, instance);

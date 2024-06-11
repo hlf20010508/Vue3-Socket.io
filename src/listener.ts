@@ -36,17 +36,17 @@ export default class VueSocketIOListener {
      * Listening all socket.io events
      */
     register() {
-        this.socket.onAny((event: string, ...args: unknown[]) => {
+        this.socket.onAny((event: string, ...args: any[]) => {
             this.onEvent(event, ...args);
         });
 
-        VueSocketIOListener.staticEvents.forEach(event => this.socket.on(event, (...args: unknown[]) => this.onEvent(event, ...args)))
+        VueSocketIOListener.staticEvents.forEach(event => this.socket.on(event, (...args: any[]) => this.onEvent(event, ...args)))
     }
 
     /**
      * Broadcast all events to vuejs environment
      */
-    onEvent(event: string, ...args: unknown[]) {
+    onEvent(event: string, ...args: any[]) {
         this.emitter.emit(event, ...args);
     }
 

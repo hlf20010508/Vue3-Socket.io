@@ -1,10 +1,10 @@
 var u = Object.defineProperty;
 var g = (i, e, t) => e in i ? u(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
 var s = (i, e, t) => (g(i, typeof e != "symbol" ? e + "" : e, t), t);
-import a, { Socket as d } from "socket.io-client";
-import { getCurrentInstance as m, onBeforeUnmount as k } from "vue";
+import { getCurrentInstance as a, onBeforeUnmount as d } from "vue";
+import m, { Socket as k } from "socket.io-client";
 function v() {
-  const i = m(), e = i.appContext.config.globalProperties.$vueSocketIO;
+  const i = a(), e = i.appContext.config.globalProperties.$vueSocketIO;
   function t(n, h) {
     e.emitter.addListener(n, h, i);
   }
@@ -14,7 +14,7 @@ function v() {
   function f(n) {
     e.emitter.removeEvent(n);
   }
-  return k(() => {
+  return d(() => {
     for (let n of e.emitter.listeners.keys())
       o(n);
   }), { subscribe: t, unsubscribe: o, removeEvent: f };
@@ -159,10 +159,10 @@ class y {
    * @param options - socket.io-client options
    */
   connect(e, t) {
-    if (e && e instanceof d)
+    if (e && e instanceof k)
       return r.info("Received socket.io-client instance"), e;
     if (typeof e == "string")
-      return r.info("Received connection string"), this.socket = a(e, t);
+      return r.info("Received connection string"), this.socket = m(e, t);
     throw new Error("Unsupported connection type");
   }
 }
