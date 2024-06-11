@@ -20,5 +20,8 @@ export default defineConfig({
     rollupOptions: {
       external: ['vue', 'socket.io-client'],
     }
+  },
+  test: {
+    environment: 'jsdom'
   }
 })
