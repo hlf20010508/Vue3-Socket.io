@@ -16,5 +16,5 @@ export interface SocketIOInstance {
 export interface VueSocketOptions {
     connection: string | Socket;
     debug?: boolean;
-    options?: ManagerOptions & SocketOptions;
+    options?: Partial<ManagerOptions & SocketOptions>;
 }
