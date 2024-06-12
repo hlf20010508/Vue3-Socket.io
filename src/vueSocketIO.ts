@@ -42,7 +42,7 @@ export default class VueSocketIO {
      * @param connection - connection string (https://example.com) or socket.io-client instance
      * @param options - socket.io-client options
      */
-    connect(connection: string | Socket, options?: ManagerOptions & SocketOptions) {
+    connect(connection: string | Socket, options?: Partial<ManagerOptions & SocketOptions>) {
         if (connection && connection instanceof Socket) {
             Logger.info('Received socket.io-client instance');
 
