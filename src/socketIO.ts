@@ -28,7 +28,7 @@ export default function useSocketIO() {
     onBeforeUnmount(() => {
         for (let event of socketIO.emitter.listeners.keys())
             unsubscribe(event);
-    })
+    });
 
     return { subscribe, unsubscribe, removeEvent };
 }

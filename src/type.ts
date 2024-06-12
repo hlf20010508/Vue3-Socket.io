@@ -2,7 +2,7 @@ import { ComponentInternalInstance } from "vue";
 import { Socket, ManagerOptions, SocketOptions } from "socket.io-client";
 
 export type ListenerCallback = (...args: any[]) => void;
-export type ListenerMap = { [key: string]: ListenerCallback };
+export type ListenerMap = { [key: string]: ListenerCallback; };
 
 export interface SocketIOInstance {
     emitter: {

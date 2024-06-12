@@ -40,7 +40,7 @@ export default class VueSocketIOListener {
             this.onEvent(event, ...args);
         });
 
-        VueSocketIOListener.staticEvents.forEach(event => this.socket.on(event, (...args: any[]) => this.onEvent(event, ...args)))
+        VueSocketIOListener.staticEvents.forEach(event => this.socket.on(event, (...args: any[]) => this.onEvent(event, ...args)));
     }
 
     /**

@@ -8,6 +8,7 @@ export default class EventEmitter {
     constructor() {
         this.listeners = new Map();
     }
+
     /**
      * register new event listener with vuejs component instance
      * @param event - the name of the event to listen for

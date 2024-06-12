@@ -37,4 +37,4 @@ export default new class VueSocketIOLogger {
                 ...data
             );
     }
-}
+};
