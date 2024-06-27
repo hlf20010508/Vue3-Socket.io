@@ -67,7 +67,7 @@ declare class VueSocketIO {
      * @param connection - connection string (https://example.com) or socket.io-client instance
      * @param options - socket.io-client options
      */
-    connect(connection: string | Socket, options?: ManagerOptions & SocketOptions): Socket<DefaultEventsMap, DefaultEventsMap>;
+    connect(connection: string | Socket, options?: Partial<ManagerOptions & SocketOptions>): Socket<DefaultEventsMap, DefaultEventsMap>;
 }
 export default VueSocketIO;
 
@@ -93,7 +93,7 @@ declare class VueSocketIOListener {
 declare interface VueSocketOptions {
     connection: string | Socket;
     debug?: boolean;
-    options?: ManagerOptions & SocketOptions;
+    options?: Partial<ManagerOptions & SocketOptions>;
 }
 
 export { }
